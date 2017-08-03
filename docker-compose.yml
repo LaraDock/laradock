@@ -107,6 +107,19 @@ services:
       networks:
         - backend
 
+### Nginx-Proxy Container ###################################
+
+    nginx-proxy:
+      image: jwilder/nginx-proxy:alpine
+      container_name: nginx-proxy
+      ports:
+        - "80:80"
+      volumes:
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+      networks:
+        - frontend
+        - backend
+
 ### Nginx Server Container ##################################
 
     nginx:
@@ -119,14 +132,17 @@ services:
       volumes:
         - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
         - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
-      ports:
-        - "${NGINX_HOST_HTTP_PORT}:80"
-        - "${NGINX_HOST_HTTPS_PORT}:443"
+      expose:
+        - "80"
+        - "443"
       depends_on:
         - php-fpm
+        - nginx-proxy
       networks:
         - frontend
         - backend
+      environment:
+        - VIRTUAL_HOST=${NGINX_VIRTUAL_HOSTS}
 
 ### Blackfire Container #################################
 
@@ -152,14 +168,17 @@ services:
       volumes:
         - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
         - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
-      ports:
-        - "${APACHE_HOST_HTTP_PORT}:80"
-        - "${APACHE_HOST_HTTPS_PORT}:443"
+      expose:
+        - "80"
+        - "443"
       depends_on:
         - php-fpm
+        - nginx-proxy
       networks:
         - frontend
         - backend
+      environment:
+        - VIRTUAL_HOST=${APACHE_VIRTUAL_HOSTS}
 
 ### HHVM Container ##########################################
 
@@ -432,16 +451,20 @@ services:
       build: ./phpmyadmin
       environment:
         - PMA_ARBITRARY=1
+        - PMA_HOST=db
         - MYSQL_USER=${PMA_USER}
         - MYSQL_PASSWORD=${PMA_PASSWORD}
         - MYSQL_ROOT_PASSWORD=${PMA_ROOT_PASSWORD}
-      ports:
-        - "${PMA_PORT}:80"
       depends_on:
         - "${PMA_DB_ENGINE}"
+        - nginx-proxy
       networks:
         - frontend
         - backend
+      links:
+          - "${PMA_DB_ENGINE}:db"
+      environment:
+        - VIRTUAL_HOST=${PMA_VIRTUAL_HOST}
 
 ### Adminer Container ####################################
 
@@ -450,25 +473,29 @@ services:
         context: ./adminer
         args:
           - INSTALL_MSSQL=${ADM_INSTALL_MSSQL}
-      ports:
-        - "${ADM_PORT}:8080"
+      expose:
+        - "8080"
       depends_on:
         - php-fpm
+        - nginx-proxy
       networks:
         - frontend
         - backend
+      environment:
+        - VIRTUAL_HOST=${ADM_VIRTUAL_HOST}
 
 ### pgAdmin Container #######################################
 
     pgadmin:
       build: ./pgadmin
-      ports:
-        - "5050:5050"
       depends_on:
         - postgres
+        - nginx-proxy
       networks:
         - frontend
         - backend
+      environment:
+        - VIRTUAL_HOST=${PGA_VIRTUAL_HOST}
 
 ### ElasticSearch Container #################################
 
