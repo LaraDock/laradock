@@ -6,6 +6,7 @@ RUN apk add --no-cache \
     openssh \
     git \
     build-base && \
+    git clone https://github.com/golang/sys.git "$GOPATH/src/golang.org/x/sys" && \
     go get github.com/abiosoft/caddyplug/caddyplug \
     && caddyplug install-caddy \
     apk del build-base
@@ -22,6 +23,6 @@ RUN apk add --no-cache inotify-tools \
 
 EXPOSE 80 443
 
-WORKDIR /var/www/public
+WORKDIR /var/www
 
 CMD ["sh","-c","/start.sh & /usr/bin/caddy -conf /etc/caddy/Caddyfile -agree"]

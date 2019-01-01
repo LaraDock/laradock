@@ -50,7 +50,8 @@ PHP_INTERPRETER=php-fpm
 ### Docker Host IP ########################################
 
 # Enter your Docker Host IP (will be appended to /etc/hosts). Default is `10.0.75.1`
-DOCKER_HOST_IP=10.0.75.1
+#DOCKER_HOST_IP=10.0.75.1
+DOCKER_HOST_IP=172.16.3.2
 
 ### Remote Interpreter ####################################
 
@@ -65,7 +66,7 @@ COMPOSE_CONVERT_WINDOWS_PATHS=1
 ### Environment ###########################################
 
 # If you need to change the sources (i.e. to China), set CHANGE_SOURCE to true
-CHANGE_SOURCE=false
+CHANGE_SOURCE=true
 
 ### Docker Sync ###########################################
 
@@ -79,7 +80,7 @@ DOCKER_SYNC_STRATEGY=native_osx
 ### WORKSPACE #############################################
 
 WORKSPACE_COMPOSER_GLOBAL_INSTALL=true
-WORKSPACE_COMPOSER_REPO_PACKAGIST=
+WORKSPACE_COMPOSER_REPO_PACKAGIST=https://packagist.laravel-china.org
 WORKSPACE_INSTALL_NODE=true
 WORKSPACE_NODE_VERSION=node
 WORKSPACE_NPM_REGISTRY=
@@ -287,7 +288,7 @@ ADM_INSTALL_MSSQL=false
 
 # Accepted values: mariadb - mysql
 
-PMA_DB_ENGINE=mysql
+PMA_DB_ENGINE=mariadb
 
 # Credentials/Port:
 

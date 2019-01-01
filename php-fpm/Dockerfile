@@ -565,8 +565,10 @@ RUN php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
 #--------------------------------------------------------------------------
 #
 
-COPY ./laravel.ini /usr/local/etc/php/conf.d
-COPY ./xlaravel.pool.conf /usr/local/etc/php-fpm.d/
+#COPY ./laravel.ini /usr/local/etc/php/conf.d
+COPY ./drupal.ini /usr/local/etc/php/conf.d
+#COPY ./xlaravel.pool.conf /usr/local/etc/php-fpm.d/
+COPY ./xdrupal.pool.conf /usr/local/etc/php-fpm.d/
 
 USER root
 
